@@ -1,0 +1,33 @@
+version: '3.1'
+
+networks:
+  rockets:
+    external: true
+
+services:
+
+  launchsite:
+    image: miltronhub/launchsite:1.0.0
+    restart: always
+    container_name: launchsite
+    networks:
+      - rockets
+    ports:
+      - 5000:5000
+      - 4000-4009:4000-4009
+
+  telemetry-ws:
+    image: mbasdas/miltron
+    container_name:  telemetry-ws
+    restart: always
+    links:
+      - launchsite
+    networks:
+      - rockets
+    ports:
+      - 8080:8080
+    environment:
+      START_PORT: 4000
+      END_PORT: 4009
+      T_HOST: launchsite
+
